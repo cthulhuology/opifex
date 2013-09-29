@@ -6,7 +6,19 @@ Opifex is a coffeescript module for doing useful work.
 Usage
 -----
 
-	opifex.facit () ->
-		console.log("I did this")
+First write a script like:
+
+	Opifex = require 'Opifex'
+	Opifex('amqp://user:password@host:port/domain/exchange/queue/key')
+		.facit = (command) ->
+			console.log "Got command #{command}"
+
+And then on the given host send to the appropriate vhost on the given exchange a message:
+
+	[ "facit", "some command" ]
+
+And it will log "Got command some command" to the console!
+
+
 
 
