@@ -1,6 +1,6 @@
 {
 	"author": "David Goehrig",
-	"name": "Opifex",
+	"name": "opifex",
 	"license" : "MIT",
 	"description": "A general purpose AMQP laborer",
 	"version": "0.0.1",
