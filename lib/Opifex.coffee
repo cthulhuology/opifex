@@ -5,9 +5,11 @@
 amqp = require 'amqp'
 
 Opifex = (Url) ->
-	[ proto, user, password, host, port, domain, exchange, queue, key ] = Url.match(
-		///([^:]+)://([^:]+):([^@]+)@([^:]+):(\d+)/([^\/]*)/([^\/]+)/([^\/]+)/(.*)///
+	[ proto, user, password, host, port, domain, exchange, key, queue, dest, path ] = Url.match(
+		///([^:]+)://([^:]+):([^@]+)@([^:]+):(\d+)/([^\/]*)/([^\/]+)/([^\/]+)/([^\/]*)/*([^\/]*)/*([^\/]*)///
 	)[1...]
+	dest ||= exchange # for publish only
+	path ||= key # for publish only, NB: you can not send to # or * routes
 	self = (message, headers, info)  ->
 		$ = arguments.callee
 		[ method, args... ] = JSON.parse message.data.toString()
@@ -33,13 +35,13 @@ Opifex = (Url) ->
 			self.queue = Queue
 			self.queue.bind exchange, key
 			self.queue.subscribe self
-	self.send = (exchange,key,msg) ->
-		if self[exchange]
-			self[exchange].publish(key,msg)
+	self.send = (msg) ->
+		if self[dest]
+			self[dest].publish(path,msg)
 		else
-			self.connection.exchange exchange, { durable: false, type: 'topic', autoDelete: true }, (Exchange) ->
-				self[exchange] = Exchange
-				Exchange?.publish(key,msg)
+			self.connection.exchange dest, { durable: false, type: 'topic', autoDelete: true }, (Exchange) ->
+				self[dest] = Exchange
+				Exchange?.publish(path,msg)
 	self
 
 module.exports = Opifex
