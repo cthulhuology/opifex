@@ -1,7 +1,8 @@
 # Opifex.coffee
-
+#
+#	© 2013 Dave Goehrig <dave@dloh.org>
+#
 amqp = require 'amqp'
-spawn = (require 'child_process').spawn
 
 Opifex = (Url) ->
 	[ proto, user, password, host, port, domain, exchange, queue, key ] = Url.match(
@@ -16,7 +17,7 @@ Opifex = (Url) ->
 		port: port,
 		login: user,
 		password: password,
-		vhost: '/' 
+		vhost: domain || '/' 
 	self.connection.on 'error', (Message) ->
 		console.log "Connection error", Message
 	self.connection.on 'end', () ->
@@ -27,13 +28,6 @@ Opifex = (Url) ->
 			self.queue = Queue
 			self.queue.bind exchange, key
 			self.queue.subscribe self
-	self.log = (message...) ->
-		console.log.apply console, message
-	self.run = (command, args...) ->
-		proc = spawn(command,args)
-		proc.stdout.on 'data', (data) -> console.log "stdout: #{data}"
-		proc.stderr.on 'data', (data) -> console.log "stderr: #{data}"
-		proc.on 'close', (code) -> console.log "#{command} exited: #{code}"
 	self
 
 module.exports = Opifex 

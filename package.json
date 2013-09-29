@@ -1,0 +1,22 @@
+{
+	"author": "David Goehrig",
+	"name": "Opifex",
+	"license" : "MIT",
+	"description": "A general purpose AMQP laborer",
+	"version": "0.0.1",
+	"repository": {
+		"url": "http://github.com/cthulhuology/opifex"
+	},
+	"main": "./lib/Opifex.coffee",
+	"bin": {},
+	"dependencies": {
+		"amqp" : "latest"
+	},
+	"devDependencies": {},
+	"optionalDependencies": {},
+	"engines": {
+		"node": "*",
+		"coffee": "*"
+	}
+}
+
