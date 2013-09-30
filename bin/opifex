@@ -1,0 +1,5 @@
+#!/usr/bin/env coffee
+#
+
+Opifex = require 'opifex'
+Opifex.apply(Opifex, process.argv[2...])
