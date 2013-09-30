@@ -4,7 +4,7 @@
 #
 amqp = require 'amqp'
 
-Opifex = (Url) ->
+Opifex = (Url,Modules...) ->
 	[ proto, user, password, host, port, domain, exchange, key, queue, dest, path ] = Url.match(
 		///([^:]+)://([^:]+):([^@]+)@([^:]+):(\d+)/([^\/]*)/([^\/]+)/([^\/]+)/([^\/]*)/*([^\/]*)/*([^\/]*)///
 	)[1...]
@@ -17,6 +17,7 @@ Opifex = (Url) ->
 		$.exchange = info.exchange
 		$.queue = info.queue
 		$[method]?.apply $, args
+	Modules?.map (x) -> (require "opifex.#{x}").apply(self,[])
 	self.exchanges = {}
 	self.connection = amqp.createConnection
 		host: host,
