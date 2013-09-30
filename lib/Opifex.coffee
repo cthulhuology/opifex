@@ -16,7 +16,10 @@ Opifex = (Url,Modules...) ->
 		$.key = info.routingKey
 		$.exchange = info.exchange
 		$.queue = info.queue
-		$[method]?.apply $, args
+		if not $[method] and $["*"]
+			$["*"].apply $, [method].concat(args)
+		else
+			$[method]?.apply $, args
 	Modules?.map (x) -> (require "opifex.#{x}").apply(self,[])
 	self.exchanges = {}
 	self.connection = amqp.createConnection
