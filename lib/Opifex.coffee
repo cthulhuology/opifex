@@ -40,6 +40,8 @@ Opifex = (Url,Modules...) ->
 			self.queue.bind exchange, key
 			self.queue.subscribe self
 	self.send = (msg) ->
+		if typeof msg != "string"
+			msg = JSON.stringify msg
 		if self[dest]
 			self[dest].publish(path,msg)
 		else
