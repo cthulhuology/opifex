@@ -16,6 +16,8 @@ Opifex = (Url,Modules...) ->
 		$.key = info.routingKey
 		$.exchange = info.exchange
 		$.queue = info.queue
+		$.dest = dest
+		$.path = path
 		if not $[method] and $["*"]
 			$["*"].apply $, [method].concat(args)
 		else
@@ -39,15 +41,17 @@ Opifex = (Url,Modules...) ->
 			self.queue = Queue
 			self.queue.bind exchange, key
 			self.queue.subscribe self
-	self.send = (msg) ->
+	self.send = (msg,route,recipient) -># route & recipient are optional, default to destination exchange and key respectively
+		route ?= dest
+		recipient ?= path
 		if typeof msg != "string"
 			msg = JSON.stringify msg
-		if self[dest]
-			self[dest].publish(path,msg)
+		if self[route]
+			self[route].publish(recipient,msg)
 		else
-			self.connection.exchange dest, { durable: false, type: 'topic', autoDelete: true }, (Exchange) ->
-				self[dest] = Exchange
-				Exchange?.publish(path,msg)
+			self.connection.exchange route, { durable: false, type: 'topic', autoDelete: true }, (Exchange) ->
+				self[route] = Exchange
+				Exchange?.publish(recipient,msg)
 	self
 
 module.exports = Opifex
