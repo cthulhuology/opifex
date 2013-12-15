@@ -26,7 +26,7 @@ Opifex = (Url,Modules...) ->
 	self.exchanges = {}
 	self.connection = amqp.createConnection
 		host: host,
-		port: port,
+		port: port*1,
 		login: user,
 		password: password,
 		vhost: domain || '/'
@@ -37,7 +37,7 @@ Opifex = (Url,Modules...) ->
 	self.connection.on 'ready', () ->
 		self.connection.exchange exchange, { durable: false, type: 'topic', autoDelete: true }, (Exchange) ->
 			self.exchange = Exchange
-		self.connection.queue queue, (Queue) ->
+		self.connection.queue queue,{ arguments: { "x-message-ttl" : 60000 } }, (Queue) ->
 			self.queue = Queue
 			self.queue.bind exchange, key
 			self.queue.subscribe self
