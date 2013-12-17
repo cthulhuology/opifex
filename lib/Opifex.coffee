@@ -41,6 +41,7 @@ Opifex = (Url,Modules...) ->
 			self.queue = Queue
 			self.queue.bind exchange, key
 			self.queue.subscribe self
+			self['init']?.apply(self,[])
 	self.send = (msg,route,recipient) -># route & recipient are optional, default to destination exchange and key respectively
 		route ?= dest
 		recipient ?= path
